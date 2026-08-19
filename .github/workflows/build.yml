@@ -8,6 +8,9 @@ on:
     branches: ["master"]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 env:
   DOTNET_RUNTIME: net10.0
   SETUP_DOTNET_VERSION: 10.0.x
