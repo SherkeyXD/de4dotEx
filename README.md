@@ -297,7 +297,6 @@ To run the containerized MCP server directly via Claude Desktop or Cursor, confi
 ```
 *(The `-i` flag is required to keep standard input open so the JSON-RPC streams can communicate securely.)*
 
-
 Docker Troubleshooting & Tips
 -----------------------------
 
