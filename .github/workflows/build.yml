@@ -32,6 +32,21 @@ jobs:
           dotnet build -c Release -f net48 de4dot.netframework.sln
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           Remove-Item Release\net48\*.pdb, Release\net48\*.xml, Release\net48\Test.Rename.*
+      - name: Build BeaEngine for .NET Framework
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git clone --depth 1 --branch $env:BEAENGINE_TAG https://github.com/BeaEngine/beaengine.git beaengine
+          cmake -S beaengine -B build-beaengine-32 -A Win32 `
+            -DoptBUILD_DLL=ON -DoptHAS_OPTIMIZED=ON -DoptHAS_SYMBOLS=OFF `
+            -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
+          cmake --build build-beaengine-32 --config Release
+          $dll32 = Get-ChildItem -Recurse build-beaengine-32 -Filter BeaEngine*.dll | Select-Object -First 1
+          if (-not $dll32) { throw "32-bit BeaEngine.dll not found" }
+          Copy-Item $dll32.FullName Release/net48/BeaEngine.dll
+          New-Item -ItemType Directory -Force Release/net48/LICENSES | Out-Null
+          Copy-Item beaengine/src/COPYING.txt Release/net48/LICENSES/LICENSE.BeaEngine.GPL.txt
+          Copy-Item beaengine/src/COPYING.LESSER.txt Release/net48/LICENSES/LICENSE.BeaEngine.LGPL.txt
       - uses: actions/upload-artifact@v7
         with:
           name: de4dotEx-net48
