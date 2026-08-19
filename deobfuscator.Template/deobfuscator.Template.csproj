@@ -5,7 +5,7 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\de4dot.snk</AssemblyOriginatorKeyFile>
     <Features>strict</Features>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>14.0</LangVersion>
     <OutputPath>..\$(Configuration)</OutputPath>
   </PropertyGroup>
 

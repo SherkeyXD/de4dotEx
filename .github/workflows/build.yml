@@ -37,6 +37,10 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           git clone --depth 1 --branch $env:BEAENGINE_TAG https://github.com/BeaEngine/beaengine.git beaengine
+          $cmakelists = 'beaengine/CMakeLists.txt'
+          (Get-Content $cmakelists) |
+            Where-Object { $_ -notmatch '\s*list\s*\(APPEND\s+BEA_FLAGS\s+/M' } |
+            Set-Content $cmakelists
           cmake -S beaengine -B build-beaengine-32 -A Win32 `
             -DoptBUILD_DLL=ON -DoptHAS_OPTIMIZED=ON -DoptHAS_SYMBOLS=OFF `
             -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
@@ -95,6 +99,7 @@ jobs:
           set -euo pipefail
           git clone --depth 1 --branch "$BEAENGINE_TAG" https://github.com/BeaEngine/beaengine.git
           if [[ "$RUNNER_OS" == "Windows" ]]; then
+            sed -i.bak -E '/[[:space:]]*list[[:space:]]*\(APPEND[[:space:]]+BEA_FLAGS[[:space:]]+\/M/d' beaengine/CMakeLists.txt
             cmake -S beaengine -B build-beaengine -A "${{ matrix.cmake_arch }}" \
               -DoptBUILD_DLL=ON -DoptHAS_OPTIMIZED=ON -DoptHAS_SYMBOLS=OFF
             cmake --build build-beaengine --config Release
@@ -141,7 +146,6 @@ jobs:
         with:
           name: de4dotEx-${{ github.ref_name }}-${{ env.DOTNET_RUNTIME }}-x64-deb
           path: de4dotEx-${{ github.ref_name }}.deb
-          archive: false
 
   publish-docker:
     name: Publish Docker image
