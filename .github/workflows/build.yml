@@ -101,7 +101,8 @@ jobs:
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             sed -i.bak -E '/[[:space:]]*list[[:space:]]*\(APPEND[[:space:]]+BEA_FLAGS[[:space:]]+\/M/d' beaengine/CMakeLists.txt
             cmake -S beaengine -B build-beaengine -A "${{ matrix.cmake_arch }}" \
-              -DoptBUILD_DLL=ON -DoptHAS_OPTIMIZED=ON -DoptHAS_SYMBOLS=OFF
+              -DoptBUILD_DLL=ON -DoptHAS_OPTIMIZED=ON -DoptHAS_SYMBOLS=OFF \
+              -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
             cmake --build build-beaengine --config Release
             native_library=$(find build-beaengine -iname 'BeaEngine*.dll' | head -n 1)
           else
